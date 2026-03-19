@@ -14,7 +14,7 @@ import {
 import { supabase, Product, Category } from '@/lib/supabase';
 import { addToCart } from '@/lib/cart';
 
-// ── Design tokens (Supabase-inspired) ─────────────────────────────────────────
+// ── Design tokens ──────────────────────────────────────────────────────────────
 const T = {
   bg: '#FCFCFC',
   surface: '#FFFFFF',
@@ -25,14 +25,16 @@ const T = {
   textMuted: '#707070',
   border: '#DFDFDF',
   borderStrong: '#D4D4D4',
-  brandFill: '#72E3AD',       // green button fill
+  brandFill: '#72E3AD',
   brandBorder: 'rgba(22,182,116,0.75)',
   brandLink: '#00B976',
+  amber: 'rgb(220,123,24)',
+  amberBg: 'rgba(220,123,24,0.08)',
 };
 
-const CARD_GAP = 10;
-const SCREEN_PADDING = 16;
-const CARD_WIDTH = (Dimensions.get('window').width - SCREEN_PADDING * 2 - CARD_GAP) / 2;
+const CARD_GAP = 8;
+const SCREEN_PADDING = 12;
+const CARD_WIDTH = (Dimensions.get('window').width - SCREEN_PADDING * 2 - CARD_GAP * 2) / 3;
 
 export default function ShopScreen() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -114,14 +116,13 @@ export default function ShopScreen() {
         ))}
       </ScrollView>
 
-      {/* Divider */}
       <View style={styles.divider} />
 
       {/* Product grid */}
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
-        numColumns={2}
+        numColumns={3}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.grid}
         showsVerticalScrollIndicator={false}
@@ -133,37 +134,71 @@ export default function ShopScreen() {
             <Text style={styles.emptyText}>No products found</Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            {item.image_url ? (
-              <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="cover" />
-            ) : (
-              <View style={styles.imagePlaceholder}>
-                <Text style={styles.imagePlaceholderText}>🛒</Text>
-              </View>
-            )}
-            <View style={styles.cardBody}>
-              <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-              <Text style={styles.price}>£{item.price.toFixed(2)}</Text>
-              <TouchableOpacity
-                style={[styles.addBtn, addingId === item.id && styles.addBtnDisabled]}
-                onPress={() => handleAddToCart(item.id)}
-                disabled={addingId === item.id}
-              >
-                {addingId === item.id ? (
-                  <ActivityIndicator size="small" color={T.textDefault} />
-                ) : (
-                  <Text style={styles.addBtnText}>+ Add</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
+        renderItem={({ item }) => <ShelfCard item={item} addingId={addingId} onAdd={handleAddToCart} />}
       />
     </View>
   );
 }
 
+// ── Shelf Card ─────────────────────────────────────────────────────────────────
+function ShelfCard({
+  item,
+  addingId,
+  onAdd,
+}: {
+  item: Product;
+  addingId: string | null;
+  onAdd: (id: string) => void;
+}) {
+  const lowStock = item.stock > 0 && item.stock <= 5;
+  const outOfStock = item.stock === 0;
+
+  return (
+    <View style={styles.card}>
+      {/* Square image — 1:1 aspect ratio */}
+      <View style={styles.imageWrap}>
+        {item.image_url ? (
+          <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="cover" />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.imagePlaceholderText}>🛒</Text>
+          </View>
+        )}
+        {/* Low stock badge */}
+        {lowStock && (
+          <View style={styles.stockBadge}>
+            <Text style={styles.stockBadgeText}>{item.stock} left</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Card body */}
+      <View style={styles.cardBody}>
+        <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
+        <Text style={[styles.price, outOfStock && styles.priceOutOfStock]}>
+          {outOfStock ? 'Out of stock' : `£${item.price.toFixed(2)}`}
+        </Text>
+
+        {!outOfStock && (
+          <TouchableOpacity
+            style={[styles.addBtn, addingId === item.id && styles.addBtnDisabled]}
+            onPress={() => onAdd(item.id)}
+            disabled={addingId === item.id}
+            activeOpacity={0.75}
+          >
+            {addingId === item.id ? (
+              <ActivityIndicator size="small" color={T.textDefault} />
+            ) : (
+              <Text style={styles.addBtnText}>+ Add</Text>
+            )}
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+}
+
+// ── Styles ─────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -208,7 +243,6 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: T.border,
-    marginHorizontal: 0,
   },
   grid: {
     paddingHorizontal: SCREEN_PADDING,
@@ -219,6 +253,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: CARD_GAP,
   },
+
+  // ── Shelf Card ───────────────────────────────────────────────────────────────
   card: {
     width: CARD_WIDTH,
     backgroundColor: T.surface,
@@ -232,44 +268,70 @@ const styles = StyleSheet.create({
     shadowRadius: 30,
     elevation: 1,
   },
+  imageWrap: {
+    width: '100%',
+    aspectRatio: 1,
+    backgroundColor: T.surfaceMuted,
+  },
   image: {
     width: '100%',
-    height: 130,
+    height: '100%',
   },
   imagePlaceholder: {
     width: '100%',
-    height: 130,
-    backgroundColor: T.surfaceMuted,
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   imagePlaceholderText: {
-    fontSize: 34,
+    fontSize: 28,
+  },
+  stockBadge: {
+    position: 'absolute',
+    bottom: 5,
+    left: 5,
+    backgroundColor: T.amberBg,
+    borderWidth: 0.67,
+    borderColor: T.amber,
+    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  stockBadgeText: {
+    fontSize: 9,
+    fontFamily: 'Aptos-SemiBold',
+    color: T.amber,
+    letterSpacing: 0.07,
   },
   cardBody: {
-    padding: 10,
+    padding: 8,
     gap: 3,
     borderTopWidth: 0.67,
     borderTopColor: T.border,
   },
   productName: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Aptos-SemiBold',
     color: T.textDefault,
-    lineHeight: 17,
+    lineHeight: 15,
   },
   price: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Aptos-Bold',
-    color: T.textDefault,
+    color: T.brandLink,
+  },
+  priceOutOfStock: {
+    color: T.textMuted,
+    fontSize: 11,
+    fontFamily: 'Aptos',
   },
   addBtn: {
-    marginTop: 6,
+    marginTop: 4,
     backgroundColor: T.brandFill,
     borderRadius: 6,
     borderWidth: 0.67,
     borderColor: T.brandBorder,
-    paddingVertical: 6,
+    paddingVertical: 5,
     alignItems: 'center',
   },
   addBtnDisabled: {
@@ -278,7 +340,7 @@ const styles = StyleSheet.create({
   addBtnText: {
     color: T.textDefault,
     fontFamily: 'Aptos-SemiBold',
-    fontSize: 12,
+    fontSize: 11,
   },
   emptyText: {
     color: T.textMuted,

@@ -1,9 +1,13 @@
 import { Tabs } from 'expo-router';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { Store01Icon, ShoppingCart01Icon, UserCircleIcon } from '@hugeicons/core-free-icons';
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { getCartCount } from '@/lib/cart';
+import * as Haptics from 'expo-haptics';
+import {
+  Home05Icon,
+  FavouriteIcon,
+  ContainerTruckIcon,
+  Settings03Icon,
+} from '@hugeicons/core-free-icons';
 
 const T = {
   bg: '#FCFCFC',
@@ -11,29 +15,12 @@ const T = {
   textMuted: '#707070',
   border: '#DFDFDF',
   brandLink: '#00B976',
-  brandFill: '#72E3AD',
 };
 
-function CartTabIcon({ color, focused }: { color: string; focused: boolean }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let active = true;
-    getCartCount().then((n) => { if (active) setCount(n); }).catch(() => {});
-    const interval = setInterval(() => {
-      getCartCount().then((n) => { if (active) setCount(n); }).catch(() => {});
-    }, 3000);
-    return () => { active = false; clearInterval(interval); };
-  }, []);
-
+function TabIcon({ icon, color, focused }: { icon: any; color: string; focused: boolean }) {
   return (
-    <View>
-      <HugeiconsIcon icon={ShoppingCart01Icon} size={24} color={color} strokeWidth={focused ? 2 : 1.5} />
-      {count > 0 && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{count > 99 ? '99+' : count}</Text>
-        </View>
-      )}
+    <View style={focused ? styles.activeIcon : undefined}>
+      <HugeiconsIcon icon={icon} size={24} color={color} strokeWidth={focused ? 2 : 1.5} />
     </View>
   );
 }
@@ -53,6 +40,15 @@ export default function TabLayout() {
           paddingTop: 8,
         },
         tabBarShowLabel: false,
+        tabBarButton: (props) => (
+          <Pressable
+            {...props}
+            onPress={(e) => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              props.onPress?.(e);
+            }}
+          />
+        ),
         headerStyle: { backgroundColor: T.bg, shadowColor: 'transparent', borderBottomWidth: 1, borderBottomColor: T.border } as any,
         headerTintColor: T.textDefault,
         headerTitleStyle: { fontFamily: 'Aptos-SemiBold', fontSize: 16, color: T.textDefault },
@@ -62,27 +58,42 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Shop',
+          title: 'Home',
           tabBarIcon: ({ color, focused }) => (
-            <HugeiconsIcon icon={Store01Icon} size={24} color={color} strokeWidth={focused ? 2 : 1.5} />
+            <TabIcon icon={Home05Icon} color={color} focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
         name="cart"
         options={{
-          title: 'Cart',
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="favourites"
+        options={{
+          title: 'Saved',
           tabBarIcon: ({ color, focused }) => (
-            <CartTabIcon color={color} focused={focused} />
+            <TabIcon icon={FavouriteIcon} color={color} focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="orders"
         options={{
-          title: 'Profile',
+          title: 'Orders',
           tabBarIcon: ({ color, focused }) => (
-            <HugeiconsIcon icon={UserCircleIcon} size={24} color={color} strokeWidth={focused ? 2 : 1.5} />
+            <TabIcon icon={ContainerTruckIcon} color={color} focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon icon={Settings03Icon} color={color} focused={focused} />
           ),
         }}
       />
@@ -91,22 +102,10 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
-  badge: {
-    position: 'absolute',
-    right: -7,
-    top: -3,
-    backgroundColor: 'rgba(220,123,24,0.9)',
-    borderRadius: 9999,
-    minWidth: 16,
-    height: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 3,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 9,
-    fontFamily: 'Aptos-Bold',
-    letterSpacing: 0.07,
+  activeIcon: {
+    shadowColor: '#171717',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
   },
 });
