@@ -9,12 +9,14 @@ import {
   Settings03Icon,
 } from '@hugeicons/core-free-icons';
 
+// Claude.ai design tokens (light mode)
 const T = {
-  bg: '#FCFCFC',
-  textDefault: '#171717',
-  textMuted: '#707070',
-  border: '#DFDFDF',
-  brandLink: '#00B976',
+  bg100: '#F9F7F1',       // warm cream page bg
+  bg200: '#F3F0E8',
+  text000: '#141413',     // primary text
+  text400: '#71706B',     // muted
+  border100: '#1F1E1C',   // dark border
+  brand200: '#D97857',    // terracotta brand
 };
 
 function TabIcon({ icon, color, focused }: { icon: any; color: string; focused: boolean }) {
@@ -29,12 +31,12 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: T.textDefault,
-        tabBarInactiveTintColor: T.textMuted,
+        tabBarActiveTintColor: T.text000,
+        tabBarInactiveTintColor: T.text400,
         tabBarStyle: {
-          backgroundColor: T.bg,
+          backgroundColor: T.bg100,
           borderTopWidth: 1,
-          borderTopColor: T.border,
+          borderTopColor: T.border100,
           height: 60,
           paddingBottom: 10,
           paddingTop: 8,
@@ -49,9 +51,9 @@ export default function TabLayout() {
             }}
           />
         ),
-        headerStyle: { backgroundColor: T.bg, shadowColor: 'transparent', borderBottomWidth: 1, borderBottomColor: T.border } as any,
-        headerTintColor: T.textDefault,
-        headerTitleStyle: { fontFamily: 'Aptos-SemiBold', fontSize: 16, color: T.textDefault },
+        headerStyle: { backgroundColor: T.bg100, shadowColor: 'transparent', borderBottomWidth: 1, borderBottomColor: T.border100 } as any,
+        headerTintColor: T.text000,
+        headerTitleStyle: { fontFamily: 'Aptos-SemiBold', fontSize: 16, color: T.text000 },
         headerShadowVisible: false,
       }}
     >
@@ -103,7 +105,7 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   activeIcon: {
-    shadowColor: '#171717',
+    shadowColor: T.text000,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 6,
