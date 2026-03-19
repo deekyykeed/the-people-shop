@@ -8,16 +8,7 @@ import {
   ContainerTruckIcon,
   Settings03Icon,
 } from '@hugeicons/core-free-icons';
-
-// Claude.ai design tokens (light mode)
-const T = {
-  bg100: '#F9F7F1',       // warm cream page bg
-  bg200: '#F3F0E8',
-  text000: '#141413',     // primary text
-  text400: '#71706B',     // muted
-  border100: '#1F1E1C',   // dark border
-  brand200: '#D97857',    // terracotta brand
-};
+import { useTheme } from '@/lib/theme';
 
 function TabIcon({ icon, color, focused }: { icon: any; color: string; focused: boolean }) {
   return (
@@ -28,6 +19,8 @@ function TabIcon({ icon, color, focused }: { icon: any; color: string; focused: 
 }
 
 export default function TabLayout() {
+  const T = useTheme();
+
   return (
     <Tabs
       screenOptions={{
@@ -37,6 +30,7 @@ export default function TabLayout() {
           backgroundColor: T.bg100,
           borderTopWidth: 1,
           borderTopColor: T.border100,
+          borderTopOpacity: 0.15,
           height: 60,
           paddingBottom: 10,
           paddingTop: 8,
@@ -51,7 +45,10 @@ export default function TabLayout() {
             }}
           />
         ),
-        headerStyle: { backgroundColor: T.bg100, shadowColor: 'transparent', borderBottomWidth: 1, borderBottomColor: T.border100 } as any,
+        headerStyle: {
+          backgroundColor: T.bg100,
+          shadowColor: 'transparent',
+        } as any,
         headerTintColor: T.text000,
         headerTitleStyle: { fontFamily: 'Aptos-SemiBold', fontSize: 16, color: T.text000 },
         headerShadowVisible: false,
@@ -66,12 +63,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="cart"
-        options={{
-          href: null,
-        }}
-      />
+      <Tabs.Screen name="cart" options={{ href: null }} />
       <Tabs.Screen
         name="favourites"
         options={{
@@ -105,7 +97,7 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   activeIcon: {
-    shadowColor: T.text000,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 6,
