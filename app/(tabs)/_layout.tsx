@@ -5,6 +5,15 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { getCartCount } from '@/lib/cart';
 
+const T = {
+  bg: '#FCFCFC',
+  textDefault: '#171717',
+  textMuted: '#707070',
+  border: '#DFDFDF',
+  brandLink: '#00B976',
+  brandFill: '#72E3AD',
+};
+
 function CartTabIcon({ color, focused }: { color: string; focused: boolean }) {
   const [count, setCount] = useState(0);
 
@@ -19,7 +28,7 @@ function CartTabIcon({ color, focused }: { color: string; focused: boolean }) {
 
   return (
     <View>
-      <HugeiconsIcon icon={ShoppingCart01Icon} size={26} color={color} strokeWidth={focused ? 2 : 1.5} />
+      <HugeiconsIcon icon={ShoppingCart01Icon} size={24} color={color} strokeWidth={focused ? 2 : 1.5} />
       {count > 0 && (
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{count > 99 ? '99+' : count}</Text>
@@ -33,20 +42,21 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#6C63FF',
-        tabBarInactiveTintColor: '#9E9E9E',
+        tabBarActiveTintColor: T.textDefault,
+        tabBarInactiveTintColor: T.textMuted,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: T.bg,
           borderTopWidth: 1,
-          borderTopColor: '#F0F0F0',
-          height: 65,
+          borderTopColor: T.border,
+          height: 60,
           paddingBottom: 10,
-          paddingTop: 6,
+          paddingTop: 8,
         },
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '600', fontFamily: 'Aptos-SemiBold' },
-        headerStyle: { backgroundColor: '#6C63FF' },
-        headerTintColor: '#fff',
-        headerTitleStyle: { fontFamily: 'Aptos-Bold', fontSize: 20 },
+        tabBarShowLabel: false,
+        headerStyle: { backgroundColor: T.bg, shadowColor: 'transparent', borderBottomWidth: 1, borderBottomColor: T.border } as any,
+        headerTintColor: T.textDefault,
+        headerTitleStyle: { fontFamily: 'Aptos-SemiBold', fontSize: 16, color: T.textDefault },
+        headerShadowVisible: false,
       }}
     >
       <Tabs.Screen
@@ -54,7 +64,7 @@ export default function TabLayout() {
         options={{
           title: 'Shop',
           tabBarIcon: ({ color, focused }) => (
-            <HugeiconsIcon icon={Store01Icon} size={26} color={color} strokeWidth={focused ? 2 : 1.5} />
+            <HugeiconsIcon icon={Store01Icon} size={24} color={color} strokeWidth={focused ? 2 : 1.5} />
           ),
         }}
       />
@@ -72,7 +82,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, focused }) => (
-            <HugeiconsIcon icon={UserCircleIcon} size={26} color={color} strokeWidth={focused ? 2 : 1.5} />
+            <HugeiconsIcon icon={UserCircleIcon} size={24} color={color} strokeWidth={focused ? 2 : 1.5} />
           ),
         }}
       />
@@ -83,19 +93,20 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   badge: {
     position: 'absolute',
-    right: -8,
-    top: -4,
-    backgroundColor: '#FF4757',
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
+    right: -7,
+    top: -3,
+    backgroundColor: 'rgba(220,123,24,0.9)',
+    borderRadius: 9999,
+    minWidth: 16,
+    height: 16,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 3,
   },
   badgeText: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: 'Aptos-Bold',
+    letterSpacing: 0.07,
   },
 });

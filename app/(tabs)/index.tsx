@@ -14,7 +14,23 @@ import {
 import { supabase, Product, Category } from '@/lib/supabase';
 import { addToCart } from '@/lib/cart';
 
-const CARD_GAP = 12;
+// ── Design tokens (Supabase-inspired) ─────────────────────────────────────────
+const T = {
+  bg: '#FCFCFC',
+  surface: '#FFFFFF',
+  surfaceMuted: '#F7F7F7',
+  surfaceControl: '#F3F3F3',
+  textDefault: '#171717',
+  textSecondary: '#525252',
+  textMuted: '#707070',
+  border: '#DFDFDF',
+  borderStrong: '#D4D4D4',
+  brandFill: '#72E3AD',       // green button fill
+  brandBorder: 'rgba(22,182,116,0.75)',
+  brandLink: '#00B976',
+};
+
+const CARD_GAP = 10;
 const SCREEN_PADDING = 16;
 const CARD_WIDTH = (Dimensions.get('window').width - SCREEN_PADDING * 2 - CARD_GAP) / 2;
 
@@ -50,7 +66,7 @@ export default function ShopScreen() {
     try {
       await addToCart(productId);
     } catch (e) {
-      // silently fail for now
+      // silently fail
     } finally {
       setAddingId(null);
     }
@@ -63,14 +79,14 @@ export default function ShopScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#6C63FF" />
+        <ActivityIndicator size="large" color={T.brandLink} />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      {/* Category filter */}
+      {/* Category filter row */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -98,6 +114,9 @@ export default function ShopScreen() {
         ))}
       </ScrollView>
 
+      {/* Divider */}
+      <View style={styles.divider} />
+
       {/* Product grid */}
       <FlatList
         data={filtered}
@@ -106,7 +125,9 @@ export default function ShopScreen() {
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.grid}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6C63FF" />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={T.brandLink} />
+        }
         ListEmptyComponent={
           <View style={styles.center}>
             <Text style={styles.emptyText}>No products found</Text>
@@ -130,7 +151,7 @@ export default function ShopScreen() {
                 disabled={addingId === item.id}
               >
                 {addingId === item.id ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color={T.textDefault} />
                 ) : (
                   <Text style={styles.addBtnText}>+ Add</Text>
                 )}
@@ -146,7 +167,7 @@ export default function ShopScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: T.bg,
   },
   center: {
     flex: 1,
@@ -155,37 +176,43 @@ const styles = StyleSheet.create({
   },
   categoryRow: {
     paddingHorizontal: SCREEN_PADDING,
-    paddingVertical: 12,
-    gap: 8,
+    paddingVertical: 10,
+    gap: 6,
   },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 4,
+    backgroundColor: T.surface,
+    borderWidth: 0.67,
+    borderColor: T.borderStrong,
   },
   chipActive: {
-    backgroundColor: '#6C63FF',
-    borderColor: '#6C63FF',
+    backgroundColor: T.surfaceControl,
+    borderColor: T.textDefault,
   },
   chipText: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Aptos-SemiBold',
-    color: '#555',
+    color: T.textSecondary,
   },
   chipTextActive: {
-    color: '#fff',
+    color: T.textDefault,
   },
   chipEmoji: {
-    fontSize: 14,
+    fontSize: 13,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: T.border,
+    marginHorizontal: 0,
   },
   grid: {
     paddingHorizontal: SCREEN_PADDING,
+    paddingTop: 14,
     paddingBottom: 24,
   },
   row: {
@@ -194,14 +221,16 @@ const styles = StyleSheet.create({
   },
   card: {
     width: CARD_WIDTH,
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: T.surface,
+    borderRadius: 6,
     overflow: 'hidden',
+    borderWidth: 0.67,
+    borderColor: T.border,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.07,
+    shadowRadius: 30,
+    elevation: 1,
   },
   image: {
     width: '100%',
@@ -210,47 +239,51 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: '100%',
     height: 130,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: T.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
   imagePlaceholderText: {
-    fontSize: 36,
+    fontSize: 34,
   },
   cardBody: {
     padding: 10,
-    gap: 4,
+    gap: 3,
+    borderTopWidth: 0.67,
+    borderTopColor: T.border,
   },
   productName: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Aptos-SemiBold',
-    color: '#222',
-    lineHeight: 18,
+    color: T.textDefault,
+    lineHeight: 17,
   },
   price: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Aptos-Bold',
-    color: '#6C63FF',
+    color: T.textDefault,
   },
   addBtn: {
     marginTop: 6,
-    backgroundColor: '#6C63FF',
-    borderRadius: 8,
-    paddingVertical: 7,
+    backgroundColor: T.brandFill,
+    borderRadius: 6,
+    borderWidth: 0.67,
+    borderColor: T.brandBorder,
+    paddingVertical: 6,
     alignItems: 'center',
   },
   addBtnDisabled: {
-    opacity: 0.6,
+    opacity: 0.55,
   },
   addBtnText: {
-    color: '#fff',
-    fontFamily: 'Aptos-Bold',
-    fontSize: 13,
+    color: T.textDefault,
+    fontFamily: 'Aptos-SemiBold',
+    fontSize: 12,
   },
   emptyText: {
-    color: '#999',
+    color: T.textMuted,
     fontFamily: 'Aptos',
-    fontSize: 15,
+    fontSize: 14,
     marginTop: 40,
   },
 });

@@ -11,9 +11,10 @@ export default function ProductScreen() {
         options={{
           title: 'Product',
           headerShown: true,
-          headerStyle: { backgroundColor: '#6C63FF' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontFamily: 'Aptos-Bold', fontSize: 18 },
+          headerStyle: { backgroundColor: '#FCFCFC' },
+          headerTintColor: '#171717',
+          headerTitleStyle: { fontFamily: 'Aptos-SemiBold', fontSize: 16 },
+          headerShadowVisible: false,
         }}
       />
       <View style={styles.container}>

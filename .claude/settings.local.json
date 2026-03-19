@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__074ef020-75ec-435b-a54b-2d4006a3beeb__list_projects",
+      "mcp__074ef020-75ec-435b-a54b-2d4006a3beeb__get_project",
+      "mcp__074ef020-75ec-435b-a54b-2d4006a3beeb__list_tables",
+      "mcp__074ef020-75ec-435b-a54b-2d4006a3beeb__get_project_url",
+      "mcp__074ef020-75ec-435b-a54b-2d4006a3beeb__get_publishable_keys",
+      "mcp__074ef020-75ec-435b-a54b-2d4006a3beeb__apply_migration"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "supabase"
+  ],
+  "enableAllProjectMcpServers": true
+}
