@@ -45,6 +45,15 @@ export type CartItem = {
   products?: Product;
 };
 
+export type ProductImage = {
+  id: string;
+  product_id: string | null;
+  url: string;
+  angle: string | null;
+  is_primary: boolean;
+  created_at: string;
+};
+
 export type Order = {
   id: string;
   session_id: string;

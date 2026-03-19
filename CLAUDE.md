@@ -82,10 +82,11 @@ CLAUDE.md         — this file (live brain)
 - [x] Core DB schema (categories, products, cart, orders)
 - [x] Expo app scaffolded with Supabase client
 - [x] MCP server configured (claude.ai Supabase)
-- [ ] Product image upload screen
-- [ ] Supabase Storage bucket (`product-images`)
-- [ ] `product_images` table
-- [ ] AI image pipeline (nano banan — TBD)
+- [x] Supabase Storage bucket (`product-images`) — public, 10MB limit, jpeg/png/webp/heic
+- [x] `product_images` table — with FK to products, RLS enabled
+- [x] Image upload screen (`app/(tabs)/upload.tsx`) — pick multiple images, upload to Storage, save URL to product_images
+- [ ] nano banan API integration (awaiting API key + docs)
+- [ ] Link uploaded images to a specific product (product picker on upload screen)
 - [ ] Admin UI for product management
 
 ---

@@ -1,32 +1,40 @@
 import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { HugeiconsIcon } from '@hugeicons/react-native';
 import * as Haptics from 'expo-haptics';
+import {
+  Home05Icon,
+  FavouriteIcon,
+  ContainerTruckIcon,
+  Settings03Icon,
+} from '@hugeicons/core-free-icons';
+import { useTheme } from '@/lib/theme';
 
-const AMBER = '#F59E0B';
-const INACTIVE = '#9CA3AF';
-
-function TabIcon({ emoji, label, focused }: { emoji: string; label: string; focused: boolean }) {
+function TabIcon({ icon, color, focused }: { icon: any; color: string; focused: boolean }) {
   return (
-    <View style={styles.tabItem}>
-      <Text style={[styles.tabEmoji, focused && styles.tabEmojiActive]}>{emoji}</Text>
-      <Text style={[styles.tabLabel, focused && styles.tabLabelActive]}>{label}</Text>
+    <View style={focused ? styles.activeIcon : undefined}>
+      <HugeiconsIcon icon={icon} size={24} color={color} strokeWidth={focused ? 2 : 1.5} />
     </View>
   );
 }
 
 export default function TabLayout() {
+  const T = useTheme();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarActiveTintColor: T.text000,
+        tabBarInactiveTintColor: T.text400,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: T.bg100,
           borderTopWidth: 1,
-          borderTopColor: '#F3F4F6',
-          height: 70,
+          borderTopColor: T.borderSubtle,
+          height: 60,
           paddingBottom: 10,
-          paddingTop: 6,
+          paddingTop: 8,
         },
         tabBarButton: (props) => (
           <Pressable
@@ -42,60 +50,46 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="🏠" label="Home" focused={focused} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon icon={Home05Icon} color={color} focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
         name="favourites"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="🤍" label="Favourite" focused={focused} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon icon={FavouriteIcon} color={color} focused={focused} />
           ),
         }}
       />
+      <Tabs.Screen name="cart" options={{ href: null }} />
+      <Tabs.Screen name="upload" options={{ href: null }} />
       <Tabs.Screen
-        name="cart"
+        name="orders"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="🛒" label="My Orders" focused={focused} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon icon={ContainerTruckIcon} color={color} focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="👤" label="Profile" focused={focused} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon icon={Settings03Icon} color={color} focused={focused} />
           ),
         }}
       />
-      <Tabs.Screen name="orders" options={{ href: null }} />
     </Tabs>
   );
 }
 
 const styles = StyleSheet.create({
-  tabItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 3,
-  },
-  tabEmoji: {
-    fontSize: 22,
-    opacity: 0.4,
-  },
-  tabEmojiActive: {
-    opacity: 1,
-  },
-  tabLabel: {
-    fontSize: 10,
-    fontFamily: 'Aptos',
-    color: INACTIVE,
-  },
-  tabLabelActive: {
-    color: AMBER,
-    fontFamily: 'Aptos-SemiBold',
+  activeIcon: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
   },
 });
